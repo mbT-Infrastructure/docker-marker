@@ -1,0 +1,12 @@
+services:
+
+    marker:
+        container_name: marker
+        build: .
+        mem_limit: 20G
+        environment:
+            - AI_API_URL=${AI_API_URL:?}
+            - AI_API_KEY=${AI_API_KEY:?}
+            - AI_MODEL=cheap
+        volumes:
+            - "./data-local:/media/marker"
