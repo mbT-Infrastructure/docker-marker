@@ -12,4 +12,5 @@ marker \
     --skip_existing \
     --timeout 3600 \
     --use_llm \
+    "$@" \
     /media/marker/input
