@@ -3,10 +3,40 @@ services:
     marker:
         container_name: marker
         build: .
-        mem_limit: 20G
+        mem_limit: 4G
+        command: run-marker.sh
         environment:
             - AI_API_URL=${AI_API_URL:?}
             - AI_API_KEY=${AI_API_KEY:?}
-            - AI_MODEL=cheap
+            - AI_MODEL=${AI_VISION_MODEL-fast}
+            - SURYA_INFERENCE_PARALLEL=1
+            - SURYA_INFERENCE_URL=http://llamacpp-server:8080/v1
         volumes:
             - "./data-local:/media/marker"
+        ports:
+            - "127.0.0.1:8080:80"
+
+    llamacpp-server:
+        image: ghcr.io/ggml-org/llama.cpp:server
+        mem_limit: 4G
+        oom_score_adj: 100
+        environment:
+            - LLAMA_ARG_ALIAS=surya-ocr-2
+            - LLAMA_ARG_CACHE_TYPE_K=q8_0
+            - LLAMA_ARG_CACHE_TYPE_V=q8_0
+            - LLAMA_ARG_FLASH_ATTN=on
+            - LLAMA_ARG_HF_REPO=datalab-to/surya-ocr-2-gguf
+            - LLAMA_ARG_MODELS_MAX=1
+            - LLAMA_ARG_N_PARALLEL=1
+            - LLAMA_ARG_SLEEP_IDLE_SECONDS=300
+            - LLAMA_ARG_WEBUI=false
+            - LLAMA_CACHE=/media/llamacpp
+        read_only: true
+        tmpfs:
+            - /root/.cache
+        volumes:
+            - "llamacpp:/media/llamacpp"
+
+volumes:
+    llamacpp:
+        external: true

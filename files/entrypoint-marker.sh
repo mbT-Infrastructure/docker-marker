@@ -11,6 +11,10 @@ if [[ -z "$AI_API_URL" ]]; then
   exit 1
 fi
 
+if [[ -z "$SURYA_INFERENCE_URL" ]]; then
+    export SURYA_INFERENCE_URL="$AI_API_URL"
+fi
+
 mkdir --parents /media/marker/{input,output,models}
 
 exec "$@"
