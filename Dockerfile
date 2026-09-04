@@ -8,6 +8,12 @@ RUN pip3-latest install --prefix /root/builder/python marker-pdf[full]
 # server dependencies
 RUN pip3-latest install --prefix /root/builder/python uvicorn fastapi python-multipart
 
+# patch to allow an API key for Surya inference backend
+COPY files/surya-remote-api-key.patch .
+RUN patch --directory "$(dirname "$(find python -type d -name surya | head --lines 1)")" \
+        --strip 1 < surya-remote-api-key.patch \
+    && rm surya-remote-api-key.patch
+
 FROM docker.io/madebytimo/python
 
 RUN apt update -qq && apt install -y -qq libbz2-dev libjpeg62-turbo libxcb1 \

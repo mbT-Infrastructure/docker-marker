@@ -1,0 +1,33 @@
+--- a/surya/settings.py	2026-09-01 16:29:11.031099272 +0200
++++ b/surya/settings.py	2026-09-01 16:29:11.059098858 +0200
+@@ -48,6 +48,7 @@
+     # Backend selection
+     SURYA_INFERENCE_BACKEND: Optional[str] = None  # "vllm" | "llamacpp" | None (auto)
+     SURYA_INFERENCE_URL: Optional[str] = None  # external server, skip spawn
++    SURYA_INFERENCE_API_KEY: str = "EMPTY"
+     SURYA_INFERENCE_AUTOSTART: bool = True
+     # Leave an auto-spawned server running after the process exits so later
+     # commands attach to it instead of re-spawning (avoids repeated startup /
+--- a/surya/inference/backends/llamacpp.py	2026-09-01 16:29:11.031099272 +0200
++++ b/surya/inference/backends/llamacpp.py	2026-09-01 16:29:11.059098858 +0200
+@@ -97,7 +97,10 @@
+                 model_name=spawned.model_name,
+                 spawned_by_us=spawned.spawned_by_us,
+             )
+-            self._client = OpenAI(api_key="EMPTY", base_url=self.handle.base_url)
++            self._client = OpenAI(
++                api_key=settings.SURYA_INFERENCE_API_KEY,
++                base_url=self.handle.base_url,
++            )
+             return self.handle
+ 
+         binary = _resolve_llama_server_binary()
+@@ -187,7 +190,7 @@
+             spawned_by_us=spawned.spawned_by_us,
+         )
+         self._client = OpenAI(
+-            api_key="EMPTY",
++            api_key=settings.SURYA_INFERENCE_API_KEY,
+             base_url=self.handle.base_url,
+         )
+         return self.handle

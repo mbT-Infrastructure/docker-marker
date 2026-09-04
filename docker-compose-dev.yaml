@@ -4,7 +4,7 @@ services:
         container_name: marker
         build: .
         mem_limit: 4G
-        command: run-marker.sh
+        command: run-marker.sh --disable_image_extraction --force_ocr
         environment:
             - AI_API_URL=${AI_API_URL:?}
             - AI_API_KEY=${AI_API_KEY:?}
